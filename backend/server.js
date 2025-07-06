@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/videos", videoRoutes )
+app.use("/api/videos", videoRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{

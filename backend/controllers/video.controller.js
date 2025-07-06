@@ -31,3 +31,14 @@ export const uploadVideo = async (req,res) =>{
         res.status(500).json({ message: "Server error while uploading video" });
     }
 };
+
+
+export const getAllVideos = async(req,res) =>{
+    try {
+        const videos = await Video.find();
+        res.status(200).json(videos);
+    } catch (error) {
+        console.error("Fetch Videos Error:", error);
+        res.status(500).json({ message: "Failed to fetch videos" });
+    }
+}
