@@ -35,7 +35,7 @@ export const uploadVideo = async (req,res) =>{
 
 export const getAllVideos = async(req,res) =>{
     try {
-        const videos = await Video.find();
+        const videos = await Video.find()
         res.status(200).json(videos);
     } catch (error) {
         console.error("Fetch Videos Error:", error);

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react"
+import VideoCard from "../components/VideoCard";
 
 
 function Home() {
@@ -26,7 +27,7 @@ function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {
                 videos.map((video)=>{
-                    <div key={video._id}>{video}</div>
+                   return <VideoCard key={video._id} video={video}/>
                 })
             }
         </div>
