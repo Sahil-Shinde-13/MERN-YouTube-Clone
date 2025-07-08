@@ -6,11 +6,11 @@ function Layout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-screen">
       <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="flex flex-grow">
         <Sidebar isOpen={isSidebarOpen} />
-        <main className={`flex-grow p-4 ${isSidebarOpen ? 'ml-60' : ''}`}>
+        <main className={`flex-grow p-4 ${isSidebarOpen ? 'sm:ml-60 ml-20' : ''}`}>
           {children}
         </main>
       </div>
