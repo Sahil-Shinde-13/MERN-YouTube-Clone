@@ -1,8 +1,13 @@
+import { useNavigate } from "react-router-dom"
 
 
 function VideoCard({video}) {
+
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white rounded-xl shadow hover:shadow-md cursor-pointer transition-all" style={{width: "100%", maxWidth: "360px"}}>
+    <div className="bg-white rounded-xl shadow hover:shadow-md cursor-pointer transition-all" style={{width: "100%", maxWidth: "360px"}}
+      onClick={()=> navigate(`/watch/${video._id}`)}>
         <div className="relative w-full pt-[56.25%] rounded-t overflow-hidden">  
         <img src={video.thumbnailUrl} alt={video.title} className="absolute top-0 left-0 w-full h-full object-cover" />
         </div>
