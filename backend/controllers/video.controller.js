@@ -54,3 +54,63 @@ export const getVideoById = async(req,res)=>{
         res.status(500).json({ message: "Server error" });
     }
 }
+
+export const increaseView = async(req,res)=>{
+    try {
+        const video = await Video.findByIdAndUpdate(
+            req.params.id,
+            {$inc: {views: 1}},
+            {new: true}
+        );
+        if(!video){
+           return res.status(404).json({message: "Video not found"})
+        }
+        res.status(200).json(video);
+    } catch (error) {
+        console.error("Increase Views Error:", error);
+        res.status(500).json({ message: "Failed to increase views" });
+    }
+}
+
+export const likeVideo = async(req,res)=>{
+    try {
+        const video = await Video.findById(req.params.id);
+        if (!video) return res.status(404).json({ message: "Video not found" });
+
+        const userId = req.user.id;
+
+        if(video.likes.includes(userId)){
+            video.likes.pull(userId);
+        }else{
+            video.likes.push(userId);
+            video.dislikes.pull(userId);
+        }
+
+        await video.save();
+        res.status(200).json({ likes: video.likes.length, dislikes: video.dislikes.length });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to like video" });
+    }
+}
+
+export const dislikeVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video) return res.status(404).json({ message: "Video not found" });
+
+    const userId = req.user.id;
+
+    // If already disliked, remove it
+    if (video.dislikes.includes(userId)) {
+      video.dislikes.pull(userId);
+    } else {
+      video.dislikes.push(userId);
+      video.likes.pull(userId); // remove from likes if present
+    }
+
+    await video.save();
+    res.status(200).json({ likes: video.likes.length, dislikes: video.dislikes.length });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to dislike video" });
+  }
+};
