@@ -2,10 +2,20 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaRegUserCircle, FaSearch, FaTimes, FaYoutube } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
+
 
 function Header({ toggleSidebar }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const User = useSelector((state) => state.auth.user);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   const [search, setSearch] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 450);
@@ -56,8 +66,20 @@ function Header({ toggleSidebar }) {
 
         {/* User Info */}
         <div className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-          {user?.username}
-          <FaRegUserCircle className="text-xl" />
+          {user ? (
+            <>
+              <span>{user.username}</span>
+              <FaRegUserCircle className="text-xl" />
+              <button onClick={handleLogout} className="ml-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer">
+                Logout
+              </button>
+            </>
+          ):(
+            <button onClick={()=> navigate("/login")} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer">
+                Sign In
+            </button>
+          )}
+          
         </div>
       </header>
 

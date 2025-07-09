@@ -35,40 +35,9 @@ function WatchVideo() {
         fetchVideo();
     },[id, user._id]);
 
-    const handleLike = async () => {
-    try {
-      const res = await axios.put(
-        `http://localhost:5000/api/videos/${id}/like`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setLikeCount(res.data.likes);
-      setDislikeCount(res.data.dislikes);
-      setUserLiked(!userLiked);
-      if (userDisliked) setUserDisliked(false);
-    } catch (err) {
-      console.error("Like failed:", err);
-    }
-  };
-
-  const handleDislike = async () => {
-    try {
-      const res = await axios.put(
-        `http://localhost:5000/api/videos/${id}/dislike`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setLikeCount(res.data.likes);
-      setDislikeCount(res.data.dislikes);
-      setUserDisliked(!userDisliked);
-      if (userLiked) setUserLiked(false);
-    } catch (err) {
-      console.error("Dislike failed:", err);
-    }
-  };
 
 
-    if (error) return <div className="p-4 text-red-500 text-center mt-10">{error}</div>;
+  if (error) return <div className="p-4 text-red-500 text-center mt-10">{error}</div>;
   if (!video) return <div className="p-4 text-center mt-10">Loading...</div>;
 
   return (
