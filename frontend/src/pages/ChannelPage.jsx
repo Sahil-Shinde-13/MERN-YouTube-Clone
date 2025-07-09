@@ -57,6 +57,9 @@ function ChannelPage() {
           <h2 className="text-2xl font-bold">{channel?.name}</h2>
           <p className="text-sm text-gray-500">{channel?.subscribers} subscribers</p>
         </div>
+        <button onClick={() => navigate("/upload")}className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+          Upload Video
+        </button>
       </div>
 
       {/* My Videos */}
@@ -75,10 +78,10 @@ function ChannelPage() {
               <p className="text-xs text-gray-500 mb-2">{video.views} views · {new Date(video.uploadDate).toLocaleDateString()}</p>
 
               <div className="flex gap-2">
-                <button onClick={() => navigate(`/edit-video/${video._id}`)} className="text-blue-500 text-sm hover:underline">
+                <button onClick={() => navigate(`/edit-video/${video._id}`)} className="text-blue-500 cursor-pointer text-sm hover:underline">
                   Edit
                 </button>
-                <button onClick={() => handleDelete(video._id)}className="text-red-500 text-sm hover:underline">
+                <button onClick={() => handleDelete(video._id)}className="text-red-500 cursor-pointer text-sm hover:underline">
                   Delete
                 </button>
               </div>

@@ -15,13 +15,16 @@ export const uploadVideo = async (req,res) =>{
             return res.status(400).json({message: "Both video and thumbnail are required"})
         }
 
+        const channel = await Channel.findOne({ userId: req.user.id });
+        if (!channel) return res.status(404).json({ message: "Channel not found" });
+
         // Create new Video document with cloud URLs
         const newVideo = new Video({
             title,
             description,
             videoUrl: videoFile.path,
             thumbnailUrl: thumbnailFile.path,
-            channelId: req.user.id,
+            channelId: channel._id,
         });
 
         // Save video to MongoDB
@@ -127,5 +130,27 @@ export const getMyVideos = async (req, res) => {
   } catch (err) {
     console.error("GetMyVideos Error:", err);
     res.status(500).json({ message: "Failed to get your videos" });
+  }
+};
+
+export const updateVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video) return res.status(404).json({ message: "Video not found" });
+
+    const channel = await Channel.findOne({ userId: req.user.id });
+    if (!channel || String(channel._id) !== String(video.channelId)) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const { title, description } = req.body;
+    video.title = title || video.title;
+    video.description = description || video.description;
+
+    await video.save();
+    res.status(200).json({ message: "Video updated successfully", video });
+  } catch (err) {
+    console.error("Update Video Error:", err);
+    res.status(500).json({ message: "Failed to update video" });
   }
 };
