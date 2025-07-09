@@ -5,21 +5,17 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 
-
 function Header({ toggleSidebar }) {
-  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const User = useSelector((state) => state.auth.user);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
-  };
-
+  const user = useSelector((state) => state.auth.user);
   const [search, setSearch] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 450);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const [hasChannel, setHasChannel] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 450);
@@ -27,15 +23,37 @@ function Header({ toggleSidebar }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  function handleSearch(e) {
-    e.preventDefault();
-  }
+  useEffect(() => {
+    // Check if user has a channel only if logged in
+    const fetchChannel = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/api/channels/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?._id) setHasChannel(true);
+        }
+      } catch (err) {
+        setHasChannel(false);
+      }
+    };
 
+    if (user) fetchChannel();
+  }, [user]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+
+  };
+  
   return (
     <>
       <header className="bg-white shadow-sm px-4 py-2 w-full flex justify-between fixed items-center top-0 z-20 border-b border-gray-200">
+        {/* Logo & Sidebar */}
         <div className="flex items-center space-x-4">
-          <button onClick={toggleSidebar} className="text-xl p-1 hover:bg-gray-100 cursor-pointer rounded-full">
+          <button onClick={toggleSidebar} className="text-xl p-1 hover:bg-gray-100 rounded-full">
             <GiHamburgerMenu />
           </button>
           <div onClick={() => navigate("/")} className="text-xl font-bold cursor-pointer flex items-center text-red-600">
@@ -44,60 +62,75 @@ function Header({ toggleSidebar }) {
           </div>
         </div>
 
-        {/* For Desktop view- Search Bar */}
+        {/* Desktop Search Bar */}
         {!isMobile && (
           <form onSubmit={handleSearch} className="flex flex-grow items-center max-w-2xl mx-4">
             <input type="text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)}
               className="flex-grow px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none focus:ring-1 focus:ring-gray-400"/>
-            <button type="submit"
-              className="bg-gray-100 px-4 py-2.5 rounded-r-full border border-l-0 border-gray-300 hover:bg-gray-200 flex items-center justify-center">
+            <button type="submit" className="bg-gray-100 px-4 py-2.5 rounded-r-full border border-l-0 border-gray-300 hover:bg-gray-200">
               <FaSearch size={18} />
             </button>
           </form>
         )}
 
-        {/*For Mobile Search Icon */}
+        {/* Mobile Search Icon */}
         {isMobile && !showMobileSearch && (
-          <button onClick={() => setShowMobileSearch(true)}
-            className="text-xl p-2 hover:bg-gray-100 rounded-full mx-4">
+          <button onClick={() => setShowMobileSearch(true)} className="text-xl p-2 hover:bg-gray-100 rounded-full mx-4">
             <FaSearch />
           </button>
         )}
 
-        {/* User Info */}
-        <div className="flex items-center gap-2 text-gray-700 text-sm font-medium">
-          {user ? (
-            <>
-              <span>{user.username}</span>
-              <FaRegUserCircle className="text-xl" />
-              <button onClick={handleLogout} className="ml-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer">
-                Logout
-              </button>
-            </>
-          ):(
-            <button onClick={()=> navigate("/login")} className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer">
-                Sign In
+        {/* Right Side: User or Sign In */}
+        <div className="ml-4 relative">
+          {!user ? (
+            <button onClick={() => navigate("/login")} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 text-sm">
+              Sign In
             </button>
+          ) : (
+            <>
+              <button onClick={() => setShowDropdown(!showDropdown)}className="flex cursor-pointer items-center gap-1 text-sm text-gray-700 font-medium">
+                <FaRegUserCircle className="text-xl" />
+                {user?.username}
+                <span className="ml-1">▼</span>
+              </button>
+
+        {showDropdown && (
+            <div className="absolute right-0 mt-2  bg-white shadow-md border rounded-md w-40 z-50">
+            <button className="block w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => {setShowDropdown(false); // 👈 close dropdown
+             navigate(hasChannel ? "/channel" : "/create-channel");}}>
+                {hasChannel ? "My Channel" : "Create Channel"}
+            </button>
+            
+            <button className="block w-full cursor-pointer text-left px-4 py-2 hover:bg-gray-100"
+              onClick={() => {setShowDropdown(false);
+                navigate("/upload");}}>
+                Upload Video
+            </button>
+            
+            <button className="block w-full cursor-pointer text-left px-4 py-2 text-red-500 hover:bg-red-50"
+              onClick={() => {setShowDropdown(false);
+                  dispatch(logout());navigate("/login");}}>
+                  Logout
+            </button>
+            </div>
+              )}
+          </>
           )}
-          
         </div>
       </header>
 
-      {/* overlay mobile search */}
+      {/* Mobile Search Overlay */}
       {isMobile && showMobileSearch && (
         <div className="fixed top-0 left-0 right-0 bg-white p-2 z-30 flex items-center gap-2 shadow-md border-b">
-          
           <form onSubmit={handleSearch} className="flex-grow flex items-center">
-            <input type="text" autoFocus placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)}
+            <input type="text" autoFocus placeholder="Search"value={search} onChange={(e) => setSearch(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-l-full focus:outline-none focus:ring-1 focus:ring-gray-400"/>
-              <button type="submit"
-                className="bg-gray-100 px-4 py-2.5 rounded-r-full border border-l-0 border-gray-300 hover:bg-gray-200 flex items-center justify-center">
-                <FaSearch size={18} />
+            <button type="submit"
+              className="bg-gray-100 px-4 py-2.5 rounded-r-full border border-l-0 border-gray-300 hover:bg-gray-200">
+              <FaSearch size={18} />
             </button>
           </form>
-          
-          <button onClick={() => setShowMobileSearch(false)}
-            className="text-xl p-2 ml-2 hover:bg-gray-100 rounded-full">
+          <button onClick={() => setShowMobileSearch(false)} className="text-xl p-2 ml-2 hover:bg-gray-100 rounded-full">
             <FaTimes />
           </button>
         </div>

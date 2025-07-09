@@ -1,5 +1,6 @@
 
 import Video from "../models/Video.model.js";
+import Channel from "../models/Channel.model.js"
 
 export const uploadVideo = async (req,res) =>{
     try {
@@ -112,5 +113,19 @@ export const dislikeVideo = async (req, res) => {
     res.status(200).json({ likes: video.likes.length, dislikes: video.dislikes.length });
   } catch (error) {
     res.status(500).json({ message: "Failed to dislike video" });
+  }
+};
+
+// Get My Videos for channel
+export const getMyVideos = async (req, res) => {
+  try {
+    const channel = await Channel.findOne({ userId: req.user.id });
+    if (!channel) return res.status(404).json({ message: "Channel not found" });
+
+    const videos = await Video.find({ channelId: channel._id }).sort({ createdAt: -1 });
+    res.status(200).json(videos);
+  } catch (err) {
+    console.error("GetMyVideos Error:", err);
+    res.status(500).json({ message: "Failed to get your videos" });
   }
 };
