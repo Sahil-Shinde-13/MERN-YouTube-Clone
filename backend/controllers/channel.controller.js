@@ -34,3 +34,17 @@ export const getMyChannel = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch channel" });
   }
 };
+
+// Get any public channel by ID
+export const getChannelById = async (req, res) => {
+  try {
+    const channel = await Channel.findById(req.params.id);
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+    res.status(200).json(channel);
+  } catch (error) {
+    console.error("Get Channel By ID Error:", error);
+    res.status(500).json({ message: "Failed to fetch channel" });
+  }
+};

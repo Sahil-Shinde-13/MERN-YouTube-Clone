@@ -13,7 +13,7 @@ function VideoCard({video}) {
         </div>
         <div className="p-3">
             <h3 className="font-semibold text-sm line-clamp-2">{video.title}</h3>
-            <p className="text-xs text-gray-600">{video.channelId}</p>
+            <p className="text-xs text-gray-600">{video.channelId.name}</p>
             <p className="text-xs text-gray-500">{video.views} views</p>
         </div>
     </div>

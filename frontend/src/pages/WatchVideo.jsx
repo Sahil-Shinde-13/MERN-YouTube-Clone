@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import axios from "axios";
 import { AiOutlineLike, AiFillLike, AiOutlineDislike, AiFillDislike } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +22,8 @@ function WatchVideo() {
 
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
+
+    const navigate = useNavigate();
 
     useEffect(()=>{
         const fetchVideo = async()=>{
@@ -101,10 +103,16 @@ function WatchVideo() {
         </div>
         <h2 className="text-xl font-semibold mb-2">{video.title}</h2>
         <div className="flex items-center text-sm text-gray-600 mb-2">
-            <div>
-            <span className="mr-4">{video.views} views</span>
-            <span>{new Date(video.uploadDate).toLocaleDateString()}</span>
-            </div>
+
+            {video.channelId && (
+                <div className="flex items-center gap-3 mb-4 cursor-pointer" onClick={() => navigate(`/channel/${video.channelId._id}`)}>
+                  <img src={ video.channelId.avatar || "https://static.vecteezy.com/system/resources/previews/036/280/651/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"}
+                    alt="channel-avatar" className="w-10 h-10 rounded-full object-cover border"/>
+                  <span className="font-medium text-gray-800 hover:underline">
+                     {video.channelId.name}
+                  </span>
+                </div>
+            )}
         
         <div className="flex gap-4">
             <button onClick={handleLike} className="flex items-center gap-1 hover:text-blue-600">
