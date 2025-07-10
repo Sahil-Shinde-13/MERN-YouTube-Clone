@@ -5,6 +5,7 @@ const channelSchema = mongoose.Schema({
   avatar: { type: String, default: "" },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   subscribers: { type: Number, default: 0 },
+  subscribedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   createdAt: { type: Date, default: Date.now }
 });
 

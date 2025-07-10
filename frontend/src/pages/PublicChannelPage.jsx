@@ -10,7 +10,30 @@ function PublicChannelPage() {
     const[channel,setChannel] = useState(null);
     const [videos, setVideos] = useState([]);
     const [error, setError] = useState("");
+    const [isSubscribed, setIsSubscribed] = useState(false);
+    const [subscriberCount, setSubscriberCount] = useState(channel?.subscribers || 0);
 
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
+
+    useEffect(() => {
+        setIsSubscribed(channel?.subscribedUsers?.includes(user._id));
+        setSubscriberCount(channel?.subscribers);
+    }, [channel]);
+
+    const handleSubscribe = async () => {
+        try {
+            const res = await axios.put(`http://localhost:5000/api/channels/${id}/subscribe`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+            setIsSubscribed(res.data.subscribed);
+            setSubscriberCount(res.data.subscribers);
+        } catch (error) {
+            console.error("Subscription failed", error);
+        }
+    };
+    
     useEffect(()=>{
         const fetchChannel = async()=>{
             try {
@@ -46,6 +69,11 @@ function PublicChannelPage() {
           <h2 className="text-2xl font-bold">{channel.name}</h2>
           <p className="text-sm text-gray-500">{channel.subscribers} subscribers</p>
         </div>
+        <button onClick={handleSubscribe}
+            className={`px-4 py-2 rounded ${isSubscribed ? "bg-gray-400" : "bg-blue-600 text-white"} hover:opacity-90`}>
+            {isSubscribed ? "Unsubscribe" : "Subscribe"}
+        </button>
+        <p className="text-sm text-gray-500">{subscriberCount} subscribers</p>
       </div>
 
       <h3 className="text-xl font-semibold mb-4">Channel Videos</h3>

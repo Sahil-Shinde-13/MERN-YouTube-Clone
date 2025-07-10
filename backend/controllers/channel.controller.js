@@ -48,3 +48,33 @@ export const getChannelById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch channel" });
   }
 };
+
+export const toggleSubscribe = async(req,res)=>{
+    try {
+      const channelId = req.params.id;
+      const userId = req.user.id;
+
+      const channel = await Channel.findById(channelId);
+      
+      if (!channel) return res.status(404).json({ message: "Channel not found" });
+          const isSubscribed = channel.subscribedUsers.includes(userId);
+
+      if (isSubscribed) {
+        channel.subscribedUsers.pull(userId);
+        channel.subscribers--;
+      } else {
+        channel.subscribedUsers.push(userId);
+        channel.subscribers++;
+      }
+
+    await channel.save();
+
+    res.status(200).json({
+      subscribed: !isSubscribed,
+      subscribers: channel.subscribers,
+    });
+    } catch (error) {
+        console.error("Subscribe Error:", error);
+        res.status(500).json({ message: "Failed to toggle subscription" });
+    }
+}
