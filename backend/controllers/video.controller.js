@@ -4,7 +4,20 @@ import Channel from "../models/Channel.model.js"
 
 export const uploadVideo = async (req,res) =>{
     try {
-        const {title,description} = req.body;
+        const {title,description,category} = req.body;
+
+        if (!title || !description || !category) {
+          return res.status(400).json({ message: "Title, description, and category are required" });
+        }
+
+        const allowedCategories = [
+          "Music", "Education", "Gaming", "News", "Sports",
+          "Entertainment", "Technology", "Other"
+        ];
+
+        if (!allowedCategories.includes(category)) {
+          return res.status(400).json({ message: "Invalid category" });
+        }
 
         // Extracted uploaded files
         const videoFile = req.files["video"]?.[0];
@@ -22,6 +35,7 @@ export const uploadVideo = async (req,res) =>{
         const newVideo = new Video({
             title,
             description,
+            category,
             videoUrl: videoFile.path,
             thumbnailUrl: thumbnailFile.path,
             channelId: channel._id,

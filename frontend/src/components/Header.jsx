@@ -45,7 +45,9 @@ function Header({ toggleSidebar }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-
+    if (search.trim()) {
+    navigate("/", {state: {searchTerm: search.trim()}});
+  }
   };
   
   return (
@@ -53,7 +55,7 @@ function Header({ toggleSidebar }) {
       <header className="bg-white shadow-sm px-4 py-2 w-full flex justify-between fixed items-center top-0 z-20 border-b border-gray-200">
         {/* Logo & Sidebar */}
         <div className="flex items-center space-x-4">
-          <button onClick={toggleSidebar} className="text-xl p-1 hover:bg-gray-100 rounded-full">
+          <button onClick={toggleSidebar} className="text-xl cursor-pointer p-1 hover:bg-gray-100 rounded-full">
             <GiHamburgerMenu />
           </button>
           <div onClick={() => navigate("/")} className="text-xl font-bold cursor-pointer flex items-center text-red-600">

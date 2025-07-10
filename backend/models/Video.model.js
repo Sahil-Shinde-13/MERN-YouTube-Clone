@@ -12,6 +12,7 @@ const videoSchema = mongoose.Schema({
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     uploadDate: { type: Date, default: Date.now },
+    category: {type: String, required: true, enum: ["Music", "Education", "Gaming", "News", "Entertainment", "Technology", "Other"]}
   },
   { 
     timestamps: true

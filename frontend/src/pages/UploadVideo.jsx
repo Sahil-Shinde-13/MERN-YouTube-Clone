@@ -9,6 +9,7 @@ function UploadVideo() {
   const [thumbnail, setThumbnail] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [category,setCategory] = useState("");
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function UploadVideo() {
     setError("");
     setLoading(true);
 
-    if (!title || !description || !video || !thumbnail) {
+    if (!title || !description || !video || !thumbnail || !category) {
       setError("All fields are required.");
       setLoading(false);
       return;
@@ -29,6 +30,7 @@ function UploadVideo() {
     formData.append("description", description);
     formData.append("video", video);
     formData.append("thumbnail", thumbnail);
+    formData.append("category", category);
 
     try {
       const res = await axios.post("http://localhost:5000/api/videos/upload", formData, {headers: {Authorization: `Bearer ${token}`,"Content-Type": "multipart/form-data",},});
@@ -62,6 +64,24 @@ function UploadVideo() {
           <textarea placeholder="Write a brief description..." rows="4" value={description} onChange={(e) => setDescription(e.target.value)}
             className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
           </textarea>
+        </div>
+
+        {/* Category dropdown */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+          <select value={category} onChange={(e)=> setCategory(e.target.value)}
+            className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option value="">Select category</option>
+              <option value="Music">Music</option>
+              <option value="Education">Education</option>
+              <option value="Gaming">Gaming</option>
+              <option value="News">News</option>
+              <option value="Sports">Sports</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Technology">Technology</option>
+              <option value="Vlogs">Vlogs</option>
+              <option value="Other">Other</option>
+          </select>
         </div>
 
         {/* Video File */}

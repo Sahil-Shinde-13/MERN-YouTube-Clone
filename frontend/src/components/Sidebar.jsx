@@ -8,6 +8,7 @@ import { RiDownloadLine } from "react-icons/ri";
 import { HiOutlineTrendingUp } from "react-icons/hi";
 import { FaMusic } from "react-icons/fa6";
 import { TbLivePhoto } from "react-icons/tb";
+import { Link } from "react-router-dom";
 
 function Sidebar({ isOpen }) {
   if (!isOpen) return null;
@@ -22,7 +23,7 @@ function Sidebar({ isOpen }) {
   return (
     <aside className="w-16 sm:w-60 bg-white shadow-md px-1 sm:px-4 py-5 fixed top-[58px] bottom-0 left-0 z-10 overflow-y-auto text-sm">
       <ul className="space-y-3">
-        <Item icon={IoHomeSharp} label="Home" />
+        <Link to="/"><Item icon={IoHomeSharp} label="Home"/></Link>
         <Item icon={SiYoutubeshorts} label="Shortz" />
         <Item icon={MdSubscriptions} label="Subscriptions" />
         <Item icon={SiYoutubemusic} label="Youtube Music" />
