@@ -39,24 +39,24 @@ This is a full-stack **YouTube Clone** built using the **MERN stack (MongoDB, Ex
 - Cloudinary account (for video/image upload)
 
 ###  Backend Setup
-cd backend
-npm install
+- cd backend
+- npm install
 
 ## Create a .env file:
-PORT=5000
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+- PORT=5000
+- MONGODB_URI=your_mongodb_uri
+- JWT_SECRET=your_jwt_secret
+- CLOUDINARY_CLOUD_NAME=your_cloud_name
+- CLOUDINARY_API_KEY=your_api_key
+- CLOUDINARY_API_SECRET=your_api_secret
 
 ## start the backend with:
-npm start or node server.js
+- npm start or node server.js
 
 ###  Frontend Setup
-cd frontend
-npm install
-npm run dev
+- cd frontend
+- npm install
+- npm run dev
 
 ---
 
