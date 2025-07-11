@@ -7,7 +7,7 @@ import { fetchComments } from "../redux/commentSlice";
 import Comments from "../components/Comments";
 
 function WatchVideo() {
-  const { id } = useParams();
+  const { id } = useParams(); // video ID from URL
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -23,23 +23,27 @@ function WatchVideo() {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Fetch video and comments on when video ID changes
   useEffect(() => {
     const fetchVideo = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/videos/${id}`);
         setVideo(res.data);
 
+        // Set like/dislike and subscription status
         if (res.data.channelId && res.data.channelId.subscribedUsers) {
           setIsSubscribed(res.data.channelId.subscribedUsers.includes(user._id));
           setSubscriberCount(res.data.channelId.subscribers);
         }
 
+        // Increment view count
         await axios.put(`http://localhost:5000/api/videos/${id}/views`);
         setLikeCount(res.data.likes.length);
         setDislikeCount(res.data.dislikes.length);
         setUserLiked(res.data.likes.includes(user._id));
         setUserDisliked(res.data.dislikes.includes(user._id));
 
+        // Load comments
         dispatch(fetchComments(id));
       } catch (error) {
         setError("Video not found or failed to load");
@@ -48,6 +52,7 @@ function WatchVideo() {
     fetchVideo();
   }, [id, user._id]);
 
+  // Subscribe or unsubscribe to channel
   const handleSubscribe = async () => {
     try {
       const res = await axios.put(`http://localhost:5000/api/channels/${video.channelId._id}/subscribe`,{},{ headers: { Authorization: `Bearer ${token}`}});
@@ -58,6 +63,7 @@ function WatchVideo() {
     }
   };
 
+  // Like video
   const handleLike = async () => {
     try {
       const res = await axios.put(`http://localhost:5000/api/videos/${id}/like`,{},{ headers: { Authorization: `Bearer ${token}`}});
@@ -70,6 +76,7 @@ function WatchVideo() {
     }
   };
 
+  // Dislike video
   const handleDislike = async () => {
     try {
       const res = await axios.put(`http://localhost:5000/api/videos/${id}/dislike`,{},{ headers: { Authorization: `Bearer ${token}`}});
@@ -88,6 +95,8 @@ function WatchVideo() {
 
   return (
     <div className="p-4 max-w-5xl mt-10 mx-auto">
+
+      {/* Video Player */}
       <div className="w-full aspect-video mb-4">
         <video src={video.videoUrl} className="w-full h-full" controls autoPlay>
         </video>
@@ -97,6 +106,7 @@ function WatchVideo() {
 
       <div className="flex items-center text-sm text-gray-600 mb-2">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 border-b pb-4">
+          
           {/* Channel Info + Subscribe */}
           <div className="flex items-center gap-4">
             {video.channelId && (

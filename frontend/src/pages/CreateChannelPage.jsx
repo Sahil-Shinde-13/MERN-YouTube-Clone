@@ -8,23 +8,24 @@ const [name, setName] = useState("");
   const [avatar, setAvatar] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");//get jwt token
 
+  // Handle form submission
   const handleCreate = async (e) => {
     e.preventDefault();
     setError("");
-
+    // Handle form submission
     if (!name.trim()) {
       setError("Channel name is required");
       return;
     }
-
-    try {
-      await axios.post("http://localhost:5000/api/channels",{ name, avatar },{ headers: { Authorization: `Bearer ${token}` } });
-      navigate("/channel");
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to create channel");
-    }
+    // API call to ceate channel
+      try {
+        await axios.post("http://localhost:5000/api/channels",{ name, avatar },{ headers: { Authorization: `Bearer ${token}` } });
+        navigate("/channel");
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to create channel");
+      }
   };
 
 

@@ -2,8 +2,9 @@ import { useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
+// Wraps pages (Header + sidebar)
 function Layout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // toggle sidebar
 
   return (
     <div className="min-h-screen flex flex-col w-screen">

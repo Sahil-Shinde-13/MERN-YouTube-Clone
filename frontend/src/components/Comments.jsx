@@ -10,6 +10,7 @@ function Comments({ videoId, user }) {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingText, setEditingText] = useState("");
 
+  // Add new comment
   const handleAddComment = (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -17,15 +18,18 @@ function Comments({ videoId, user }) {
     setNewComment("");
   };
 
+  // Delete a comment
   const handleDeleteComment = (commentId) => {
     dispatch(deleteComment(commentId));
   };
 
+  // Start editing a comment
   const handleEditComment = (commentId, text) => {
     setEditingCommentId(commentId);
     setEditingText(text);
   };
 
+  // Save edited comment
   const handleSaveEdit = () => {
     if (editingText.trim()) {
       dispatch(editComment({ commentId: editingCommentId, text: editingText }));
@@ -40,6 +44,7 @@ function Comments({ videoId, user }) {
     <div className="mt-8">
       <h3 className="text-lg font-semibold mb-4">Comments</h3>
 
+      {/* New Comment Input */}
       {user && (
         <form onSubmit={handleAddComment} className="mb-4 flex items-center gap-2">
           <input type="text" placeholder="Add a comment..." value={newComment} onChange={(e) => setNewComment(e.target.value)}
@@ -53,6 +58,7 @@ function Comments({ videoId, user }) {
       {loading && <p className="text-gray-500">Loading comments...</p>}
       {!loading && comments.length === 0 && <p className="text-sm text-gray-500">No comments yet.</p>}
 
+      {/* Comment List */}
       <ul className="space-y-5">
         {comments.map((comment) => (
           <li key={comment._id} className="border-b pb-4">

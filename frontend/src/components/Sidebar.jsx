@@ -10,9 +10,11 @@ import { FaMusic } from "react-icons/fa6";
 import { TbLivePhoto } from "react-icons/tb";
 import { Link } from "react-router-dom";
 
+// Renders the sidebar
 function Sidebar({ isOpen }) {
-  if (!isOpen) return null;
+  if (!isOpen) return null;// hide if sidebar is closed
 
+  // Sidebar menu item component
   const Item = ({ icon: Icon, label }) => (
     <li className="flex sm:flex-row flex-col sm:items-center items-center gap-1 sm:gap-4 px-2 py-2 rounded-lg hover:bg-gray-300 cursor-pointer">
       <Icon size={20} />
@@ -30,11 +32,11 @@ function Sidebar({ isOpen }) {
       </ul>
 
       <hr className="my-4 border-gray-400" />
-
+      
+      {/* You Section */}
       <p className="text-xs text-gray-500 mb-2 flex items-center justify-center sm:justify-start">
         You <FaGreaterThan className="ml-1" />
       </p>
-
       <ul className="space-y-3">
         <Item icon={FaHistory} label="History" />
         <Item icon={CgPlayListSearch} label="Playlists" />
@@ -45,10 +47,10 @@ function Sidebar({ isOpen }) {
 
       <hr className="my-4 border-gray-400" />
 
+      {/* Explore Section */}
       <p className="text-xs text-gray-500 mb-2 flex items-center justify-center sm:justify-start">
         Explore <FaGreaterThan className="ml-1" />
       </p>
-
       <ul className="space-y-3">
         <Item icon={HiOutlineTrendingUp} label="Trending" />
         <Item icon={FaShoppingBag} label="Shopping" />

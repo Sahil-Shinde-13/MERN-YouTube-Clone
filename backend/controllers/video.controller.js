@@ -2,14 +2,17 @@
 import Video from "../models/Video.model.js";
 import Channel from "../models/Channel.model.js"
 
+// Upload a new video
 export const uploadVideo = async (req,res) =>{
     try {
         const {title,description,category} = req.body;
 
+        // Validate input
         if (!title || !description || !category) {
           return res.status(400).json({ message: "Title, description, and category are required" });
         }
 
+        // Allow only predefined categories
         const allowedCategories = [
           "Music", "Education", "Gaming", "News", "Sports",
           "Entertainment", "Technology", "Other"
@@ -28,6 +31,7 @@ export const uploadVideo = async (req,res) =>{
             return res.status(400).json({message: "Both video and thumbnail are required"})
         }
 
+        // Get channel based on logged-in user
         const channel = await Channel.findOne({ userId: req.user.id });
         if (!channel) return res.status(404).json({ message: "Channel not found" });
 
@@ -51,6 +55,7 @@ export const uploadVideo = async (req,res) =>{
 };
 
 
+//Fetch all videos
 export const getAllVideos = async(req,res) =>{
     try {
         const videos = await Video.find().populate("channelId", "name avatar");
@@ -61,6 +66,7 @@ export const getAllVideos = async(req,res) =>{
     }
 }
 
+//Get a single video by ID
 export const getVideoById = async(req,res)=>{
     try {
         const video = await Video.findById(req.params.id).populate("channelId", "name avatar");
@@ -73,6 +79,7 @@ export const getVideoById = async(req,res)=>{
     }
 }
 
+//Increase view count
 export const increaseView = async(req,res)=>{
     try {
         const video = await Video.findByIdAndUpdate(
@@ -90,6 +97,8 @@ export const increaseView = async(req,res)=>{
     }
 }
 
+
+//Like video
 export const likeVideo = async(req,res)=>{
     try {
         const video = await Video.findById(req.params.id);
@@ -98,10 +107,10 @@ export const likeVideo = async(req,res)=>{
         const userId = req.user.id;
 
         if(video.likes.includes(userId)){
-            video.likes.pull(userId);
+            video.likes.pull(userId); // remove like
         }else{
-            video.likes.push(userId);
-            video.dislikes.pull(userId);
+            video.likes.push(userId); // add like
+            video.dislikes.pull(userId); // remove dislike
         }
 
         await video.save();
@@ -111,6 +120,8 @@ export const likeVideo = async(req,res)=>{
     }
 }
 
+
+//Dislike video
 export const dislikeVideo = async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
@@ -120,8 +131,8 @@ export const dislikeVideo = async (req, res) => {
 
     // If already disliked, remove it
     if (video.dislikes.includes(userId)) {
-      video.dislikes.pull(userId);
-    } else {
+      video.dislikes.pull(userId);// remove dislike
+    } else { 
       video.dislikes.push(userId);
       video.likes.pull(userId); // remove from likes if present
     }
@@ -147,6 +158,7 @@ export const getMyVideos = async (req, res) => {
   }
 };
 
+// Update video details
 export const updateVideo = async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
@@ -166,5 +178,24 @@ export const updateVideo = async (req, res) => {
   } catch (err) {
     console.error("Update Video Error:", err);
     res.status(500).json({ message: "Failed to update video" });
+  }
+};
+
+// Delete a video
+export const deleteVideo = async (req, res) => {
+  try {
+    const video = await Video.findById(req.params.id);
+    if (!video) return res.status(404).json({ message: "Video not found" });
+
+    const channel = await Channel.findOne({ userId: req.user.id });
+    if (!channel || String(channel._id) !== String(video.channelId)) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    await video.deleteOne();
+    res.status(200).json({ message: "Video deleted successfully" });
+  } catch (error) {
+    console.error("Delete Video Error:", error);
+    res.status(500).json({ message: "Failed to delete video" });
   }
 };

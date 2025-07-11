@@ -12,14 +12,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+//Middleware
 app.use(cors());
 app.use(express.json());
 
+//API Route handlers
 app.use("/api/auth", authRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/channels", channelRoutes);
 
+// MongoDB Connection using Mongoose
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>{
     console.log(`DB connected successfully`);
@@ -28,6 +31,7 @@ mongoose.connect(process.env.MONGO_URI)
     console.log(`DB is not connected`);
 });
 
+//Start the server
 app.listen(PORT, ()=>{
     console.log(`Server is running at post ${PORT}`);
 });

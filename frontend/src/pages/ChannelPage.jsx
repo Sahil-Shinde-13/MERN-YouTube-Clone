@@ -10,6 +10,7 @@ function ChannelPage() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
+  // Fetch channel info and videos on mount
   useEffect(() => {
     const fetchChannel = async () => {
       try {
@@ -34,10 +35,12 @@ function ChannelPage() {
     Promise.all([fetchChannel(), fetchMyVideos()]).finally(() => setLoading(false));
   }, [token]);
 
+  // Handle deleting a video
   const handleDelete = async (videoId) => {
     if (!window.confirm("Are you sure you want to delete this video?")) return;
     try {
       await axios.delete(`http://localhost:5000/api/videos/${videoId}`, {headers: { Authorization: `Bearer ${token}` },});
+      // Remove video from local state
       setVideos((prev) => prev.filter((v) => v._id !== videoId));
     } catch (err) {
       alert("Failed to delete video");
@@ -50,17 +53,23 @@ function ChannelPage() {
   return (
     <div className="p-4 max-w-6xl mx-auto mt-20">
       {/* Channel Info */}
-      <div className="flex items-center gap-4 mb-6 border p-4 rounded shadow-sm bg-white">
-        <img src={channel?.avatar || "https://static.vecteezy.com/system/resources/previews/036/280/651/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"}
-          alt="avatar"className="w-20 h-20 rounded-full border object-cover"/>
-        <div>
-          <h2 className="text-2xl font-bold">{channel?.name}</h2>
-          <p className="text-sm text-gray-500">{channel?.subscribers} subscribers</p>
-        </div>
-        <button onClick={() => navigate("/upload")}className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
-          Upload Video
-        </button>
-      </div>
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6 border p-4 rounded shadow-sm bg-white">
+  <img
+    src={channel?.avatar || "https://static.vecteezy.com/system/resources/previews/036/280/651/original/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-illustration-vector.jpg"}
+    alt="avatar"
+    className="w-20 h-20 rounded-full border object-cover"
+  />
+  <div className="flex-1">
+    <h2 className="text-2xl font-bold">{channel?.name}</h2>
+    <p className="text-sm text-gray-500">{channel?.subscribers} subscribers</p>
+  </div>
+  <button
+    onClick={() => navigate("/upload")}
+    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm w-full md:w-auto"
+  >
+    Upload Video
+  </button>
+</div>
 
       {/* My Videos */}
       <h3 className="text-xl font-semibold mb-4">My Uploaded Videos</h3>

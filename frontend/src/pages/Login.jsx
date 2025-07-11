@@ -8,21 +8,26 @@ import { login } from "../redux/authSlice";
 function Login() {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    // Form and state management
     const [formData, setFormData] = useState({email: "", password: ""});
     const [error,setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const dispatch = useDispatch()
-
+    
+    // Handle form input change
     const handleChange = (e) =>{
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
+    // Handle login form submission
     const handleSubmit = async(e) =>{
         e.preventDefault();
         setError("");
         setLoading(true);
         try {
             const res = await axios.post("http://localhost:5000/api/auth/login", formData);
+            // Save token and user info in localStorage and Redux
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("user", JSON.stringify(res.data.user));
             dispatch(login({ user: res.data.user, token: res.data.token }));
@@ -40,14 +45,18 @@ function Login() {
             <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
             {error && <p className="text-red-500 mb-4">{error}</p>}
 
+            {/* Email Input */}
             <input name="email" type="email" placeholder="Enter your Email"
             className="w-full p-2 mb-4 border rounded"
             onChange={handleChange} required />
 
+            {/* Password Input */}
             <input name="password" type="password" placeholder="Enter your Password"
             className="w-full p-2 mb-4 border rounded"
             onChange={handleChange} required />
-            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:opacity-50" disabled={loading}>
+
+            {/* Submit Button */}
+            <button type="submit" className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 disabled:opacity-50" disabled={loading}>
                 {loading ? "Signing in..." : "Sign In"}
             </button>
             <p className="text-sm mt-4 text-center">

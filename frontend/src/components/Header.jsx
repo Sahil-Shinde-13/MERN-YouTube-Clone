@@ -9,14 +9,16 @@ function Header({ toggleSidebar }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Access user data from Redux store
   const user = useSelector((state) => state.auth.user);
+
   const [search, setSearch] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 450);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [hasChannel, setHasChannel] = useState(false); // Whether logged-in user has a channel
 
-  const [hasChannel, setHasChannel] = useState(false);
-
+  // Handle responsive layout for mobile
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 450);
     window.addEventListener("resize", handleResize);
@@ -43,6 +45,7 @@ function Header({ toggleSidebar }) {
     if (user) fetchChannel();
   }, [user]);
 
+  // Handle search submit
   const handleSearch = (e) => {
     e.preventDefault();
     if (search.trim()) {
@@ -52,7 +55,9 @@ function Header({ toggleSidebar }) {
   
   return (
     <>
+      {/* Main Header */}
       <header className="bg-white shadow-sm px-4 py-2 w-full flex justify-between fixed items-center top-0 z-20 border-b border-gray-200">
+        
         {/* Logo & Sidebar */}
         <div className="flex items-center space-x-4">
           <button onClick={toggleSidebar} className="text-xl cursor-pointer p-1 hover:bg-gray-100 rounded-full">
@@ -95,7 +100,8 @@ function Header({ toggleSidebar }) {
                 {user?.username}
                 <span className="ml-1">▼</span>
               </button>
-
+        
+        {/* Dropdown Menu */}
         {showDropdown && (
             <div className="absolute right-0 mt-2  bg-white shadow-md border rounded-md w-40 z-50">
             <button className="block w-full text-left px-4 py-2 cursor-pointer hover:bg-gray-100" onClick={() => {setShowDropdown(false); // 👈 close dropdown

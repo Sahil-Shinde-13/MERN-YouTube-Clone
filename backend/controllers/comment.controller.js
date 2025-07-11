@@ -44,9 +44,12 @@ export const editComment = async (req, res) => {
     const { text } = req.body;
     const comment = await Comment.findById(req.params.commentId);
     if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    // Check ownership
     if (comment.userId.toString() !== req.user.id)
       return res.status(403).json({ message: "Not authorized to edit this comment" });
 
+    // Update and save
     comment.text = text || comment.text;
     await comment.save();
 
@@ -62,9 +65,12 @@ export const deleteComment = async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.commentId);
     if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    // Check ownership
     if (comment.userId.toString() !== req.user.id)
       return res.status(403).json({ message: "Not authorized to delete this comment" });
 
+    // Delete
     await Comment.findByIdAndDelete(req.params.commentId);
     res.status(200).json({ message: "Comment deleted" });
   } catch (error) {
